@@ -17,10 +17,12 @@
         material (Three/MeshLambertMaterial. (clj->js {:color 0xff0000}))
         mesh (Three/Mesh. geometry material)
         light (new Three/PointLight 0xffff00)]
+    (swap! *global-objects assoc :light light :mesh mesh)
     (.. light -position (set 10 0 10))
     (.add global-scene light)
     (.. mesh -position (set (rand-int 10) (rand-int 10) (rand-int 10)))
     (.add global-scene mesh)
+    (.log js/console 1)
     (.render global-renderer global-scene global-camera)))
 
 (defn initialize-canvas! []
@@ -34,14 +36,7 @@
 
 (defn main! [] (initialize-canvas!) (println "App started."))
 
-(defn reset-scene! []
-  (loop []
-    (if (pos? (.. global-scene -children -length))
-      (do
-       (.warn js/console (-> global-scene (.-children) (aget 0)))
-       (.remove global-scene (-> global-scene (.-children) (aget 0)))
-       (.log js/console (.-children global-scene))
-       (recur)))))
+(defn reset-scene! [] (doseq [[k obj] @*global-objects] (.remove global-scene obj)))
 
 (defn reload! [] (reset-scene!) (render-objects!) (println "Code updated."))
 
