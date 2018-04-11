@@ -35,6 +35,10 @@ calcit-editor # watching server...
 op=compile calcit-editor # generate code.
 ```
 
+### Assets
+
+Teapot file https://graphics.stanford.edu/courses/cs148-10-summer/as3/code/as3/teapot.obj
+
 ### Workflow
 
 https://github.com/mvc-works/calcit-threejs-workflow

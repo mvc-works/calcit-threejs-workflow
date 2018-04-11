@@ -10,20 +10,30 @@
 
 (defonce global-scene (new Three/Scene))
 
+(defn add-scene-object! [pairs]
+  (doseq [[k obj] pairs] (.add global-scene obj))
+  (swap! *global-objects merge pairs)
+  (.render global-renderer global-scene global-camera))
+
 (def mount-target (.querySelector js/document ".app"))
 
 (defn render-objects! []
-  (let [geometry (Three/BoxGeometry. 5 5 5)
+  (.log js/console Three/ObjectLoader)
+  (let [geometry (Three/BoxGeometry. 2 2 2)
         material (Three/MeshLambertMaterial. (clj->js {:color 0xff0000}))
         mesh (Three/Mesh. geometry material)
-        light (new Three/PointLight 0xffff00)]
-    (swap! *global-objects assoc :light light :mesh mesh)
-    (.. light -position (set 10 0 10))
-    (.add global-scene light)
-    (.. mesh -position (set (rand-int 10) (rand-int 10) (rand-int 10)))
-    (.add global-scene mesh)
-    (.log js/console 1)
-    (.render global-renderer global-scene global-camera)))
+        light (Three/PointLight. 0xffff00)
+        loader (Three/ObjectLoader.)]
+    (.. light -position (set -5 -5 -5))
+    (.. mesh -position (set (rand-int 5) (rand-int 5) (rand-int 5)))
+    (add-scene-object! {:mesh mesh, :light light})
+    (.load
+     loader
+     "/entry/teapot.json"
+     (fn [teapot] (.log js/console "teapot" teapot) (add-scene-object! {:teapot teapot}))
+     (fn [xhr] (println (str (* 100 (/ (.-loaded xhr) (.-total xhr))) "% loaded")))
+     (fn [error] (.log js/console error)))
+    (.log js/console 1)))
 
 (defn initialize-canvas! []
   (let []
@@ -36,7 +46,9 @@
 
 (defn main! [] (initialize-canvas!) (println "App started."))
 
-(defn reset-scene! [] (doseq [[k obj] @*global-objects] (.remove global-scene obj)))
+(defn reset-scene! []
+  (doseq [[k obj] @*global-objects] (.remove global-scene obj))
+  (reset! *global-objects {}))
 
 (defn reload! [] (reset-scene!) (render-objects!) (println "Code updated."))
 

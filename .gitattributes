@@ -1,3 +1,6 @@
 
 calcit.edn -diff linguist-generated
 yarn.lock -diff
+
+entry/teapot.* -diff linguist-generated
+
