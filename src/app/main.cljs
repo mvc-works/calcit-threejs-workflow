@@ -27,21 +27,32 @@
   (let [geometry (Three/BoxGeometry. 1 1 1)
         material (Three/MeshLambertMaterial. (clj->js {:color 0xff0000}))
         mesh (Three/Mesh. geometry material)
-        light (Three/PointLight. 0xffff00)
-        loader (OBJLoader2.)]
-    (.. light -position (set 0 0 0))
-    (.. mesh -position (set (rand-int 5) (rand-int 5) (rand-int 5)))
+        light (Three/PointLight. 0xffffff)
+        loader (OBJLoader2.)
+        stl-loader (STLLoader.)]
+    (.. light -position (set 0 2 3))
+    (.. mesh -position (set 0 0 -2))
     (add-scene-object! {:mesh mesh, :light light})
     (.load
      loader
      "/entry/tree.obj"
      (fn [event]
        (.log js/console "teapot" event)
-       (add-scene-object! {:teapot (.. event -detail -loaderRootNode)}))
+       (comment add-scene-object! {:teapot (.. event -detail -loaderRootNode)}))
      nil
      nil
      nil
      false)
+    (.load
+     stl-loader
+     "/entry/tree.stl"
+     (fn [deer-geometry]
+       (.log js/console "deer" deer-geometry)
+       (let [deer-mesh (Three/Mesh. deer-geometry material)]
+         (set! (.-castShadow deer-mesh) true)
+         (.. deer-mesh -position (set -4 -2 -4))
+         (.. deer-mesh -scale (set 2 2 2))
+         (add-scene-object! {:deer deer-mesh}))))
     (.log js/console 1)))
 
 (defn initialize-canvas! []
