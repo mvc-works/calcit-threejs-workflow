@@ -19,6 +19,12 @@
                                :http-root "target"
                                :http-port 7000}
                     :compiler-options {:infer-externs :auto}
+                    :js-options {:resolve {"OBJLoader2" {:target :file
+                                                         :file "loaders/OBJLoader2.js"}
+                                           "STLLoader" {:target :file
+                                                        :file "loaders/STLLoader.js"}
+                                           "LoaderSupport" {:target :file
+                                                            :file "loaders/LoaderSupport.js"}}}
                     :release {:output-dir "dist/"
                               :module-hash-names 8
                               :build-options {:manifest-name "assets.edn"}}}

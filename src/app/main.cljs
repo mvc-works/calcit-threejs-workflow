@@ -1,6 +1,11 @@
 
 (ns app.main
-  (:require [app.schema :as schema] [cljs.reader :refer [read-string]] ["three" :as Three]))
+  (:require [app.schema :as schema]
+            [cljs.reader :refer [read-string]]
+            ["three" :as Three]
+            ["LoaderSupport" :as LoaderSupport]
+            ["OBJLoader2" :as OBJLoader2]
+            ["STLLoader" :as STLLoader]))
 
 (defonce *global-objects (atom {}))
 
@@ -19,20 +24,24 @@
 
 (defn render-objects! []
   (.log js/console Three/ObjectLoader)
-  (let [geometry (Three/BoxGeometry. 2 2 2)
+  (let [geometry (Three/BoxGeometry. 1 1 1)
         material (Three/MeshLambertMaterial. (clj->js {:color 0xff0000}))
         mesh (Three/Mesh. geometry material)
         light (Three/PointLight. 0xffff00)
-        loader (Three/ObjectLoader.)]
-    (.. light -position (set -5 -5 -5))
+        loader (OBJLoader2.)]
+    (.. light -position (set 0 0 0))
     (.. mesh -position (set (rand-int 5) (rand-int 5) (rand-int 5)))
     (add-scene-object! {:mesh mesh, :light light})
     (.load
      loader
-     "/entry/teapot.json"
-     (fn [teapot] (.log js/console "teapot" teapot) (add-scene-object! {:teapot teapot}))
-     (fn [xhr] (println (str (* 100 (/ (.-loaded xhr) (.-total xhr))) "% loaded")))
-     (fn [error] (.log js/console error)))
+     "/entry/tree.obj"
+     (fn [event]
+       (.log js/console "teapot" event)
+       (add-scene-object! {:teapot (.. event -detail -loaderRootNode)}))
+     nil
+     nil
+     nil
+     false)
     (.log js/console 1)))
 
 (defn initialize-canvas! []

@@ -39,6 +39,8 @@ op=compile calcit-editor # generate code.
 
 Teapot file https://graphics.stanford.edu/courses/cs148-10-summer/as3/code/as3/teapot.obj
 
+Tree file https://www.turbosquid.com/FullPreview/Index.cfm/ID/582052
+
 ### Workflow
 
 https://github.com/mvc-works/calcit-threejs-workflow
