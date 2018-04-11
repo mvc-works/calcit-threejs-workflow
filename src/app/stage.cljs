@@ -27,17 +27,17 @@
      "./entry/tree.stl"
      (fn [tree-geometry]
        (.log js/console "geometry" tree-geometry)
+       (.translate tree-geometry -2.3 0 -2.1)
        (let [tree-mesh (Three/Mesh.
                         tree-geometry
-                        (Three/MeshLambertMaterial. (clj->js {:color 0x55aa55})))]
-         (.translateX tree-mesh 10)
+                        (Three/MeshLambertMaterial. (clj->js {:color 0xbbeebb})))]
          (set! (.-castShadow tree-mesh) true)
-         (.. tree-mesh -position (set 0 3 0))
+         (.. tree-mesh -position (set 0 0.5 0))
          (.. tree-mesh -scale (set 2 2 2))
          (add-scene-object! {:tree tree-mesh}))))))
 
 (defn render-camera! []
-  (.. global/camera -position (set 0 8 12))
+  (.. global/camera -position (set 0 8 14))
   (.lookAt global/camera (.-position global/scene)))
 
 (defn render-cube! []
@@ -63,8 +63,8 @@
 (defn render-objects! []
   (render-light!)
   (render-plane!)
-  (render-cube!)
+  (comment render-cube!)
   (render-camera!)
-  (load-teapot!)
+  (comment load-teapot!)
   (load-tree!)
   (.log js/console 1))
