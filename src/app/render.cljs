@@ -21,7 +21,7 @@
   (make-page
    ""
    (let [assets (read-string (slurp "dist/assets.edn"))
-         cdn (if preview? "" "http://cdn.tiye.me/calcit-workflow/")
+         cdn (if preview? "" "http://cdn.tiye.me/calcit-threejs-workflow/")
          prefix-cdn (fn [x] (str cdn x))]
      (merge
       base-info
