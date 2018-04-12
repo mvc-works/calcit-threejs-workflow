@@ -1,14 +1,16 @@
 
 (ns app.global (:require ["three" :as Three]))
 
+(defonce *mouse-states (atom {:dragging? false, :p0 {:x 0, :y 0}}))
+
 (defonce *objects (atom {}))
 
 (defonce *values (atom {:time 0}))
 
 (defonce scene (new Three/Scene))
 
-(defn add-scene-object! [pairs]
-  (doseq [[k obj] pairs] (.add scene obj))
+(defn add-object! [pairs]
+  (doseq [[k obj] pairs] (comment .log js/console "add object" k obj) (.add scene obj))
   (swap! *objects merge pairs))
 
 (defonce camera

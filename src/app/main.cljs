@@ -5,16 +5,20 @@
             ["three" :as Three]
             [app.global :as global]
             [app.stage :refer [render-objects!]]
-            [app.animate :refer [animation-loop!]]))
+            [app.animate :refer [animation-loop!]]
+            [app.interactions :as interactions]))
 
 (def mount-target (.querySelector js/document ".app"))
 
 (defn initialize-canvas! []
-  (let []
+  (let [el (.-domElement global/renderer)]
     (.setSize global/renderer (.-innerWidth js/window) (.-innerHeight js/window))
     (.setClearColor global/renderer 0xdddddd 1)
-    (.appendChild mount-target (.-domElement global/renderer))
+    (.appendChild mount-target el)
     (render-objects!)
+    (.addEventListener el "mousedown" #(interactions/on-mousedown! %))
+    (.addEventListener el "mousemove" #(interactions/on-mousemove! %))
+    (.addEventListener el "mouseup" #(interactions/on-mouseup! %))
     (.requestAnimationFrame js/window animation-loop!)))
 
 (defn main! [] (initialize-canvas!) (println "App started."))

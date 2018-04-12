@@ -45,6 +45,8 @@ Tree file https://www.turbosquid.com/FullPreview/Index.cfm/ID/582052
 
 https://github.com/mvc-works/calcit-threejs-workflow
 
+Might be useful https://threejs.org/docs/#examples/controls/OrbitControls
+
 ### License
 
 MIT
