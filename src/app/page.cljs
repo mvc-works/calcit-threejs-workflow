@@ -1,5 +1,5 @@
 
-(ns app.render
+(ns app.page
   (:require [respo.render.html :refer [make-string]]
             [shell-page.core :refer [make-page spit slurp]]
             [app.schema :as schema]
@@ -13,7 +13,7 @@
    ""
    (merge
     base-info
-    {:styles [], :scripts ["/main.js"], :inline-styles [(slurp "./entry/main.css")]})))
+    {:styles [], :scripts ["/client.js"], :inline-styles [(slurp "./entry/main.css")]})))
 
 (def preview? (= "preview" js/process.env.prod))
 

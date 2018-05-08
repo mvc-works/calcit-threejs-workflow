@@ -1,6 +1,6 @@
 
 (ns build.upload
-  (:require [clojure.java.shell :refer [sh]]))
+  (:require ["child_process" :as cp]))
 
 (def configs {:orgization "mvc-works"
               :name "calcit-threejs-workflow"
@@ -8,7 +8,7 @@
 
 (defn sh! [command]
   (println command)
-  (println (sh "bash" "-c" command)))
+  (println (.toString (cp/execSync command))))
 
 (defn -main []
   (sh! "cp -r entry dist/")
@@ -16,5 +16,4 @@
   (sh!
     (str "rsync -avr --progress dist/{index.html,manifest.json,entry} tiye.me:repo/"
       (:orgization configs) "/"
-      (:name configs) "/"))
-  (shutdown-agents))
+      (:name configs) "/")))
