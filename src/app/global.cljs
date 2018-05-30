@@ -10,6 +10,7 @@
 (defonce scene (new Three/Scene))
 
 (defn add-object! [pairs]
+  (assert (map? pairs) "use map for adding objects...")
   (doseq [[k obj] pairs] (comment .log js/console "add object" k obj) (.add scene obj))
   (swap! *objects merge pairs))
 
