@@ -2,5 +2,6 @@
 calcit.edn -diff linguist-generated
 yarn.lock -diff
 
-entry/*.obj -diff linguist-generated
-entry/*.stl -diff linguist-generated
+entry/*.obj binary
+entry/*.stl binary
+entry/*.gltf binary

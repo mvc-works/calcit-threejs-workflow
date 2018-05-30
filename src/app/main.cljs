@@ -21,11 +21,15 @@
     (.addEventListener el "mouseup" #(interactions/on-mouseup! %))
     (.requestAnimationFrame js/window animation-loop!)))
 
-(defn main! [] (initialize-canvas!) (println "App started."))
+(defn main! []
+  (initialize-canvas!)
+  (println "App started.")
+  (set! (.-globalScene js/window) global/scene))
 
 (defn reset-scene! []
   (doseq [[k obj] @global/*objects] (.remove global/scene obj))
-  (reset! global/*objects {}))
+  (reset! global/*objects {})
+  (set! (.-fog global/scene) nil))
 
 (defn reload! [] (reset-scene!) (render-objects!) (println "Code updated."))
 

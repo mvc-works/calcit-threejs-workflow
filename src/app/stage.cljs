@@ -4,13 +4,32 @@
             ["LoaderSupport" :as LoaderSupport]
             ["STLLoader" :as STLLoader]
             ["OBJLoader2" :as OBJLoader2]
+            ["GLTFLoader" :as GLTFLoader]
             [app.global :as global]
-            [app.global :refer [add-object!]]))
+            [app.global :refer [add-object!]]
+            [app.util :refer [show-size!]]))
 
 (defn generate-line [color vertices]
   (let [geometry (Three/Geometry.)]
     (doseq [v vertices] (.. geometry -vertices (push v)))
     (Three/Line. geometry (Three/LineBasicMaterial. (clj->js {:color color})))))
+
+(defn load-duck! []
+  (let [loader (GLTFLoader.)]
+    (.load
+     loader
+     "./entry/duck.gltf"
+     (fn [gltf]
+       (.traverse
+        (.-scene gltf)
+        (fn [child]
+          (if (= "Mesh" (.-type child))
+            (let [duck-mesh (.clone child)]
+              (.set (.-position duck-mesh) 0 0 -100)
+              (show-size! duck-mesh)
+              (do (.log js/console "Child" child) (add-object! {:duck duck-mesh})))))))
+     (fn [xhr] (comment .log js/console xhr))
+     (fn [error] (.error js/console "Error" error)))))
 
 (defn load-teapot! []
   (let [loader (OBJLoader2.)]
@@ -19,7 +38,9 @@
      "./entry/teapot.obj"
      (fn [event]
        (.log js/console "teapot" event)
-       (add-object! {:teapot (.. event -detail -loaderRootNode)}))
+       (let [teapot-mesh (.. event -detail -loaderRootNode)]
+         (show-size! teapot-mesh)
+         (add-object! {:teapot teapot-mesh})))
      nil
      nil
      nil
@@ -48,19 +69,24 @@
     (add-object! {:x x-axis, :y y-axis, :z z-axis})))
 
 (defn render-camera! []
-  (.. global/camera -position (set -8 8 20))
+  (.. global/camera -position (set 2 -4 40))
   (.lookAt global/camera (.-position global/scene)))
 
 (defn render-cube! []
   (let [cube-mesh (Three/Mesh.
                    (Three/BoxGeometry. 2 2 2)
                    (Three/MeshBasicMaterial. (clj->js {:color 0xffff00})))]
+    (.log js/console "read mesh:" cube-mesh)
     (.. cube-mesh -position (set 0 0 0))
     (add-object! {:cube cube-mesh})))
 
+(defn render-fog! []
+  (let [fog-color (Three/Color. 0xaaaaaa)]
+    (set! (.-fog global/scene) (Three/Fog. fog-color 0.1 100))))
+
 (defn render-light! []
   (let [light (Three/PointLight. 0xffffff)]
-    (.. light -position (set 0 0 6))
+    (.. light -position (set 6 0 6))
     (add-object! {:light light})))
 
 (defn render-plane! []
@@ -79,12 +105,14 @@
 
 (defn render-objects! []
   (render-light!)
+  (render-fog!)
   (render-camera!)
   (comment render-plane!)
   (render-axis!)
-  (render-rotation-lines!)
+  (comment render-rotation-lines!)
   (comment render-cube!)
-  (comment load-teapot!)
-  (comment load-tree!)
+  (load-teapot!)
+  (load-tree!)
+  (load-duck!)
   (.render global/renderer global/scene global/camera)
   (.log js/console 1))
