@@ -26,10 +26,11 @@
           (if (= "Mesh" (.-type child))
             (let [duck-mesh (.clone child)]
               (.set (.-position duck-mesh) 0 0 -100)
+              (.set (.-scale duck-mesh) 0.1 0.1 0.1)
               (show-size! duck-mesh)
               (do (.log js/console "Child" child) (add-object! {:duck duck-mesh})))))))
      (fn [xhr] (comment .log js/console xhr))
-     (fn [error] (.error js/console "Error" error)))))
+     (fn [error] (.error js/console "GLTF Loading Error:" error)))))
 
 (defn load-teapot! []
   (let [loader (OBJLoader2.)]
@@ -52,14 +53,14 @@
      stl-loader
      "./entry/tree.stl"
      (fn [tree-geometry]
-       (.log js/console "geometry" tree-geometry)
-       (.translate tree-geometry -2.3 0 -2.1)
+       (comment .log js/console "geometry" tree-geometry)
+       (comment .translate tree-geometry -2.3 0 -2.1)
        (let [tree-mesh (Three/Mesh.
                         tree-geometry
                         (Three/MeshLambertMaterial. (clj->js {:color 0xbbeebb})))]
-         (set! (.-castShadow tree-mesh) true)
-         (.. tree-mesh -position (set 0 0.5 0))
-         (.. tree-mesh -scale (set 2 2 2))
+         (comment set! (.-castShadow tree-mesh) true)
+         (comment .. tree-mesh -position (set 0 0.5 0))
+         (comment .. tree-mesh -scale (set 2 2 2))
          (add-object! {:tree tree-mesh}))))))
 
 (defn render-axis! []
@@ -69,13 +70,13 @@
     (add-object! {:x x-axis, :y y-axis, :z z-axis})))
 
 (defn render-camera! []
-  (.. global/camera -position (set 2 -4 40))
+  (.. global/camera -position (set 3 4 20))
   (.lookAt global/camera (.-position global/scene)))
 
 (defn render-cube! []
   (let [cube-mesh (Three/Mesh.
                    (Three/BoxGeometry. 2 2 2)
-                   (Three/MeshBasicMaterial. (clj->js {:color 0xffff00})))]
+                   (Three/MeshBasicMaterial. (clj->js {:color 0xffffff})))]
     (.log js/console "read mesh:" cube-mesh)
     (.. cube-mesh -position (set 0 0 0))
     (add-object! {:cube cube-mesh})))
@@ -105,14 +106,14 @@
 
 (defn render-objects! []
   (render-light!)
-  (render-fog!)
+  (comment render-fog!)
   (render-camera!)
   (comment render-plane!)
   (render-axis!)
   (comment render-rotation-lines!)
-  (comment render-cube!)
+  (render-cube!)
   (load-teapot!)
-  (load-tree!)
+  (comment load-tree!)
   (load-duck!)
   (.render global/renderer global/scene global/camera)
-  (.log js/console 1))
+  (.log js/console global/scene))
