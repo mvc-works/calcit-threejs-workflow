@@ -59,7 +59,7 @@
                         tree-geometry
                         (Three/MeshLambertMaterial. (clj->js {:color 0xbbeebb})))]
          (comment set! (.-castShadow tree-mesh) true)
-         (comment .. tree-mesh -position (set 0 0.5 0))
+         (.. tree-mesh -position (set 0 0.5 -6))
          (comment .. tree-mesh -scale (set 2 2 2))
          (add-object! {:tree tree-mesh}))))))
 
@@ -70,8 +70,10 @@
     (add-object! {:x x-axis, :y y-axis, :z z-axis})))
 
 (defn render-camera! []
-  (.. global/camera -position (set 3 4 20))
-  (.lookAt global/camera (.-position global/scene)))
+  (let [position (:position @global/*camera-info)
+        orientation (:orientation @global/*camera-info)]
+    (.. global/camera -position (set (.-x position) (.-y position) (.-z position)))
+    (.lookAt global/camera (.add (.clone position) orientation))))
 
 (defn render-cube! []
   (let [cube-mesh (Three/Mesh.
@@ -108,12 +110,12 @@
   (render-light!)
   (comment render-fog!)
   (render-camera!)
-  (comment render-plane!)
+  (render-plane!)
   (render-axis!)
-  (comment render-rotation-lines!)
+  (render-rotation-lines!)
   (render-cube!)
   (load-teapot!)
-  (comment load-tree!)
+  (load-tree!)
   (load-duck!)
   (.render global/renderer global/scene global/camera)
   (.log js/console global/scene))

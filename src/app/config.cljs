@@ -11,4 +11,6 @@
 (def site
   {:title "Three",
    :icon "http://cdn.tiye.me/logo/mvc-works.png",
-   :cdn-url "http://cdn.tiye.me/calcit-threejs-workflow/"})
+   :cdn-url "http://cdn.tiye.me/calcit-threejs-workflow/",
+   :cdn-folder "tiye.me:cdn/calcit-threejs-workflow",
+   :upload-folder "tiye.me:repo/mvc-works/calcit-threejs-workflow/"})

@@ -19,6 +19,7 @@
     (.addEventListener el "mousedown" #(interactions/on-mousedown! %))
     (.addEventListener el "mousemove" #(interactions/on-mousemove! %))
     (.addEventListener el "mouseup" #(interactions/on-mouseup! %))
+    (.addEventListener el "wheel" #(interactions/on-wheel! %))
     (.requestAnimationFrame js/window animation-loop!)))
 
 (defn main! []
