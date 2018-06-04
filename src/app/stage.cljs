@@ -90,6 +90,7 @@
 (defn render-light! []
   (let [light (Three/PointLight. 0xffffff)]
     (.. light -position (set 6 0 6))
+    (set! (.-intensity light) 1.2)
     (add-object! {:light light})))
 
 (defn render-plane! []
@@ -106,8 +107,23 @@
                     0x222222
                     [(Three/Vector3. 0 0 0) (Three/Vector3. 10 10 10)])}))
 
+(defn render-spot-light! []
+  (let [light (Three/SpotLight. 0xffffff)]
+    (.. light -position (set 6 0 6))
+    (set! (.-castShadow light))
+    (set! (-> light .-shadow .-mapSize .-width) 1024)
+    (set! (-> light .-shadow .-mapSize .-height) 1024)
+    (set! (-> light .-shadow .-camera .-near) 500)
+    (comment set! (.-intensity light) 1.5)
+    (set! (-> light .-shadow .-camera .-far) 4000)
+    (set! (-> light .-shadow .-camera .-fov) 30)
+    (.log js/console "target:" (.-target light))
+    (-> light .-target .-position (.set 0 0 0))
+    (add-object! {:spot-light light})))
+
 (defn render-objects! []
   (render-light!)
+  (comment render-spot-light!)
   (comment render-fog!)
   (render-camera!)
   (render-plane!)
