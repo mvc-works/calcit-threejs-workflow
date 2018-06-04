@@ -3,10 +3,12 @@
   (:require [respo.render.html :refer [make-string]]
             [shell-page.core :refer [make-page spit slurp]]
             [app.schema :as schema]
-            [cljs.reader :refer [read-string]]))
+            [cljs.reader :refer [read-string]]
+            [app.util :refer [get-env!]]
+            [app.config :as config]))
 
 (def base-info
-  {:title "Calcit", :icon "http://cdn.tiye.me/logo/mvc-works.png", :ssr nil, :inline-html nil})
+  {:title (:title config/site), :icon (:icon config/site), :ssr nil, :inline-html nil})
 
 (defn dev-page []
   (make-page
@@ -15,13 +17,13 @@
     base-info
     {:styles [], :scripts ["/client.js"], :inline-styles [(slurp "./entry/main.css")]})))
 
-(def preview? (= "preview" js/process.env.prod))
+(def local-bundle? (get-env! "mode"))
 
 (defn prod-page []
   (make-page
    ""
    (let [assets (read-string (slurp "dist/assets.edn"))
-         cdn (if preview? "" "http://cdn.tiye.me/calcit-threejs-workflow/")
+         cdn (if local-bundle? "" (:cdn-url config/site))
          prefix-cdn (fn [x] (str cdn x))]
      (merge
       base-info
@@ -30,6 +32,6 @@
        :inline-styles [(slurp "./entry/main.css")]}))))
 
 (defn main! []
-  (if (= "dev" js/process.env.env)
-    (spit "target/index.html" (dev-page))
-    (spit "dist/index.html" (prod-page))))
+  (if (contains? config/bundle-builds (get-env! "mode"))
+    (spit "dist/index.html" (prod-page))
+    (spit "target/index.html" (dev-page))))
